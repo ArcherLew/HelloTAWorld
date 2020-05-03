@@ -21,10 +21,10 @@ public class Tree
 
     List<TreeCrown> crowns = new List<TreeCrown>();
     TreeTrunk trunk;
-    
-    public Tree(){}
 
-    public Tree(Vector3 treePos)
+    public Tree() { }
+
+    public Tree(Vector3 crownOffset)
     {
         gameObject.name = "tree";
 
@@ -33,20 +33,17 @@ public class Tree
         for (int i = 0; i < crownCount; i++)
         {
             float x = Random.Range(-3.0f, 3.0f);
-            float y = Random.Range(10.0f, 20.0f);
+            float y = Random.Range(5.0f, 20.0f);
             float z = Random.Range(-3.0f, 3.0f);
-            Vector3 crownPos = new Vector3(x, y, z);
+            Vector3 crownPos = new Vector3(x, y, z) + crownOffset * Random.Range(0.0f, 1.0f);
             centerPos += crownPos;
             TreeCrown tc = new TreeCrown(8, 4, crownPos);
             tc.transform.SetParent(transform);
         }
 
-        float d = Random.Range(1.0f, 2.0f);
+        float d = Random.Range(0.5f, 1.0f);
         TreeTrunk tt = new TreeTrunk(centerPos / crownCount, d);
         tt.transform.SetParent(transform);
-
-
-        transform.position = treePos;
     }
 }
 
