@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tree
+public class Mushroom
 {
     GameObject _gameObject;
     public GameObject gameObject
@@ -19,12 +19,12 @@ public class Tree
     }
     public Transform transform;
 
-    List<TreeCrown> crowns = new List<TreeCrown>();
-    TreeTrunk trunk;
+    List<Crown> crowns = new List<Crown>();
+    Trunk trunk;
 
-    public Tree() { }
+    public Mushroom() { }
 
-    public Tree(Vector3 crownOffset)
+    public Mushroom(Vector3 crownOffset)
     {
         gameObject.name = "tree";
 
@@ -37,12 +37,12 @@ public class Tree
             float z = Random.Range(-3.0f, 3.0f);
             Vector3 crownPos = new Vector3(x, y, z) + crownOffset * Random.Range(0.0f, 1.0f);
             centerPos += crownPos;
-            TreeCrown tc = new TreeCrown(8, 4, crownPos);
+            Crown tc = new Crown(8, 4, crownPos);
             tc.transform.SetParent(transform);
         }
 
         float d = Random.Range(0.5f, 1.0f);
-        TreeTrunk tt = new TreeTrunk(centerPos / crownCount, d);
+        Trunk tt = new Trunk(centerPos / crownCount, d);
         tt.transform.SetParent(transform);
     }
 }

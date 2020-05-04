@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TreeTrunk
+public class Trunk
 {
     GameObject _gameObject;
     public GameObject gameObject
@@ -19,7 +19,7 @@ public class TreeTrunk
     }
     public Transform transform;
 
-    public TreeTrunk(Vector3 lPos, float d)
+    public Trunk(Vector3 lPos, float d)
     {
         float length = lPos.magnitude;
         gameObject.name = "trunk";

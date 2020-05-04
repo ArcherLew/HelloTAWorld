@@ -46,28 +46,9 @@ public class CrownLayer
 }
 
 // 树冠
-public class TreeCrown
-{
-    GameObject _gameObject;
-    public GameObject gameObject
-    {
-        get
-        {
-            if (_gameObject == null)
-            {
-                _gameObject = new GameObject();
-                _gameObject.name = "crown";
-                transform = _gameObject.transform;
-            }
-            return _gameObject;
-        }
-    }
-    public Transform transform;
-    Mesh mesh;
-    List<Vector3> vertexList;
-    List<int> indexList;
-
-
+public class Crown  : MyMesh
+{   
+ 
     int centerVerticesCount;
     int centerRadius;
 
@@ -76,7 +57,7 @@ public class TreeCrown
     List<CrownLayer> topLayers;
     List<CrownLayer> bottomLayers;
 
-    public TreeCrown()
+    public Crown()
     {
 
         vertexList = new List<Vector3>() {
@@ -96,7 +77,7 @@ public class TreeCrown
         UpdateMesh();
     }
 
-    public TreeCrown(int cvc, int cr, Vector3 lPos)
+    public Crown(int cvc, int cr, Vector3 lPos)
     {
         vertexList = new List<Vector3>();
         indexList = new List<int>();
@@ -153,24 +134,8 @@ public class TreeCrown
 
         UpdateMesh();
 
+        gameObject.name = "crown";
         transform.localPosition = lPos;
-    }
-
-    private void UpdateMesh()
-    {
-        Vector3[] vertices = vertexList.ToArray();
-        int[] indices = indexList.ToArray();
-
-        Util.FixFaceToClockWise(vertices, indices);
-
-        mesh = new Mesh();
-        mesh.vertices = vertices;
-        mesh.triangles = indices;
-
-        mesh.RecalculateNormals();
-
-        gameObject.AddComponent<MeshFilter>().mesh = mesh;
-        gameObject.AddComponent<MeshRenderer>().material = new Material(Shader.Find("Diffuse"));
     }
 
     private void CreateLayerVertices(CrownLayer layer)
@@ -231,7 +196,7 @@ public class TreeCrown
 
     /// <summary>
     /// 在 lowerLayer, upperLayer 之间构建三角形
-    /// todo: 算法有点漏洞，腰线的顶点有两份内存，后续优化
+    /// todo: 后续算法优化
     /// </summary>
     /// <param name="layer1"></param>
     /// <param name="layer2"></param>

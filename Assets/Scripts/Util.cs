@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Util
 {
+    // todo: river face 
     public static void FixFaceToClockWise(Vector3[] vertices, int[] triangles)
     {
         Vector3 p0, p1, p2, v01, v12;
@@ -12,7 +13,7 @@ public class Util
         {
             p0 = vertices[triangles[i]];
             p1 = vertices[triangles[i + 1]];
-            if(triangles[i + 2] >= vertices.Length)
+            if (triangles[i + 2] >= vertices.Length)
                 Debug.LogError(i);
 
             p2 = vertices[triangles[i + 2]];
@@ -25,9 +26,17 @@ public class Util
                 triangles[i + 1] = triangles[i + 2];
                 triangles[i + 2] = temp;
             }
-            else if (Vector3.Dot(v01, v12) == 0)
+            else
             {
-                Debug.LogError(string.Format("{0},{1},{2}, 三点共线", p0, p1, p2));
+                if ((v01.z + v12.z == 0 && v01.z * v12.z == 0) || (v01.z * v12.z != 0 && v01.x / v01.z == v12.x / v12.z))
+                {
+                    Debug.LogError(v01.ToString());
+                    Debug.LogError(v12.ToString());
+                    Debug.LogError(string.Format("{0},{1},{2}, 三点共线", p0, p1, p2));
+                    CreatePoint(p0, "dot");
+                    CreatePoint(p1, "dot");
+                    CreatePoint(p2, "dot");
+                }
             }
         }
     }
