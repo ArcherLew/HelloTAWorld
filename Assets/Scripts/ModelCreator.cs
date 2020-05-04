@@ -15,14 +15,15 @@ public class ModelCreator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CreateGround();
-        CreateRiver();
+        clusters = new List<GameObject>();
+        
+        CreateTerrain();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (clusterIndex < 10)
+        if (clusterIndex < 10 && false)
         {
             Vector3 clusterPos = new Vector3(Random.Range(-100.0f, 100.0f), 0, Random.Range(-100.0f, 100.0f));
             if (clusters.Count <= clusterIndex)
@@ -52,17 +53,8 @@ public class ModelCreator : MonoBehaviour
         //     CreateRiver();
     }
 
-    void CreateGround()
-    {
-        GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        ground.name = "ground";
-        ground.transform.localPosition = Vector3.zero;
-        ground.transform.localScale = new Vector3(groundSize, 0.1f, groundSize);
 
-        clusters = new List<GameObject>();
-    }
-
-    void CreateRiver()
+    void CreateTerrain()
     {
         List<int> riverEdgeL = new List<int>();
         List<int> riverEdgeR = new List<int>();
@@ -73,7 +65,7 @@ public class ModelCreator : MonoBehaviour
         int zStep = 10;
         int zTop = groundSize / 2;
 
-        for (int z = 120; z > -120; z -= 10)
+        for (int z = 120; z >= -120; z -= 10)
         {
             w += Random.Range(-10, 10);
             w = Mathf.Max(w, 10);
@@ -90,6 +82,41 @@ public class ModelCreator : MonoBehaviour
             // Util.CreatePoint(posR);
         }
 
+        CreateGrounds(riverEdgeL, riverEdgeR, zStep, zTop);
+        CreateRiver(riverEdgeL, riverEdgeR, zStep, zTop);
+    }
+
+    void CreateGrounds(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop)
+    {
+        // GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        // ground.name = "ground";
+        // ground.transform.localPosition = Vector3.zero;
+        // ground.transform.localScale = new Vector3(groundSize, 0.1f, groundSize);
+
+
+        int xMin = -groundSize / 2;
+        List<int> groundEdgeL = new List<int>();
+        for (int i = 0; i < riverEdgeL.Count; i++)
+        {
+            if (riverEdgeL[i] > xMin)
+                groundEdgeL.Add(xMin);
+        }
+
+        Ground groundL = new Ground(groundEdgeL, riverEdgeL, zStep, zTop);
+
+        int xMax = groundSize / 2;
+        List<int> groundEdgeR = new List<int>();
+        for (int i = 0; i < riverEdgeR.Count; i++)
+        {
+            if (riverEdgeR[i] < xMax)
+                groundEdgeR.Add(xMax);
+        }
+
+        Ground groundR = new Ground(riverEdgeR, groundEdgeR, zStep, zTop);
+    }
+
+    void CreateRiver(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop)
+    {
         River river = new River(riverEdgeL, riverEdgeR, zStep, zTop);
     }
 }

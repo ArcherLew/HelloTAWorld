@@ -8,26 +8,38 @@ public class River : MyMesh
     int zStep = 0;
     int zTop = 0;
 
-    List<List<Vector3>> waterVertices;
-
+    List<List<Vector3>> strips;
+    List<Vector3> upperTopStrip, upperBottomStrip, upperLeftStrip, upperRightStrip;
+    List<Vector3> lowerTopStrip, lowerBottomStrip, lowerLeftStrip, lowerRightStrip;
+    Vector3 lowerTL, lowerTR, lowerBL, lowerBR;
 
     public River(List<int> el, List<int> er, int zs, int zt)
     {
         zStep = zs;
         zTop = zt;
 
-        waterVertices = new List<List<Vector3>>();
+        strips = new List<List<Vector3>>();
+
+        upperLeftStrip = new List<Vector3>();
+        upperRightStrip = new List<Vector3>();
+
+        lowerTopStrip = new List<Vector3>();
+        lowerBottomStrip = new List<Vector3>();
+        lowerLeftStrip = new List<Vector3>();
+        lowerRightStrip = new List<Vector3>();
+
         vertexList = new List<Vector3>();
         indexList = new List<int>();
 
         CreateWaterVertices(el, er);
         CreateWaterTriangles();
 
+        // detFactor = -1;
         UpdateMesh("MyWorld/River");
 
         gameObject.name = "river";
         transform.position = new Vector3(0, 2f, 0);
-        transform.localEulerAngles = new Vector3(0, 0, 180);
+        // transform.localEulerAngles = new Vector3(0, 0, 180);
     }
 
     private void CreateWaterVertices(List<int> el, List<int> er)
@@ -36,48 +48,65 @@ public class River : MyMesh
         for (int i = 0; i < el.Count; i++, z -= zStep)
         {
             List<Vector3> strip = new List<Vector3>();
-            waterVertices.Add(strip);
+            strips.Add(strip);
+
 
             for (int x = el[i]; x <= er[i]; x += xStep)
             {
                 strip.Add(new Vector3(x, 0, z));
 
-                int d = er[i] - x;
-                if (d > 0 && d < 5)
-                    strip.Add(new Vector3(er[i], 0, z));
+                if (x == el[i])
+                    upperLeftStrip.Add(strip[strip.Count - 1]);
             }
+            if (strip[strip.Count - 1].x != er[i])
+                strip.Add(new Vector3(er[i], 0, z));
+
+            upperRightStrip.Add(strip[strip.Count - 1]);
         }
+
+        upperTopStrip = strips[0];
+        upperBottomStrip = strips[strips.Count - 1];
+
+        foreach (Vector3 v in upperTopStrip)
+            lowerTopStrip.Add(new Vector3(v.x, -10, v.z));
+        foreach (Vector3 v in upperBottomStrip)
+            lowerBottomStrip.Add(new Vector3(v.x, -10, v.z));
+        foreach (Vector3 v in upperLeftStrip)
+            lowerLeftStrip.Add(new Vector3(v.x, -10, v.z));
+        foreach (Vector3 v in upperRightStrip)
+            lowerRightStrip.Add(new Vector3(v.x, -10, v.z));
+
+        // lowerTL = lowerTopStrip[0];
+        // lowerTR = lowerTopStrip[lowerTopStrip.Count - 1];
+        // lowerBL = lowerBottomStrip[0];
+        // lowerBR = lowerBottomStrip[lowerTopStrip.Count - 1];
     }
 
     private void CreateWaterTriangles()
     {
-        for (int i = 0; i < waterVertices.Count - 1; i++)
+        for (int i = 0; i < strips.Count - 1; i++)
         {
-            CreateStripTriangles(waterVertices[i], waterVertices[i + 1]);
+            CreateStripsTriangles(strips[i], strips[i + 1]);
         }
-    }
 
-    // 缓存已经存储到 vertexList 里的 vertex 在 vertexList 里的 index，避免重复保存顶点数据
-    private Dictionary<Vector3, int> vertex2Index = new Dictionary<Vector3, int>();
+        CreateStripsTriangles(upperTopStrip, lowerTopStrip, 'x');
+        CreateStripsTriangles(upperBottomStrip, lowerBottomStrip, 'x');
+        CreateStripsTriangles(upperLeftStrip, lowerLeftStrip, 'z');
+        CreateStripsTriangles(upperRightStrip, lowerRightStrip, 'z');
+
+        CreateStripCornerTriangles(upperTopStrip, lowerLeftStrip[1], lowerRightStrip[1]);
+        CreateStripCornerTriangles(upperBottomStrip, lowerLeftStrip[lowerLeftStrip.Count - 2], lowerRightStrip[lowerRightStrip.Count - 2]);
+
+        for (int i = 1; i < lowerLeftStrip.Count - 2; i++)
+            CreateQuadTriangles(lowerLeftStrip[i], lowerRightStrip[i], lowerLeftStrip[i + 1], lowerRightStrip[i + 1]);
+    }
 
     /// <summary>
-    /// 将一个未保存过的顶点存入到 vertexList，并建立索引到 vertex2Index
+    /// 创建水面三角形
     /// </summary>
-    /// <param name="v">顶点</param>
-    /// <returns>顶点在vertexList 里的 index</returns>
-    private int TryAddVertex(Vector3 v)
-    {
-        int result;
-        if (!vertex2Index.TryGetValue(v, out result))
-        {
-            vertexList.Add(v);
-            result = vertexList.Count - 1;
-            vertex2Index.Add(v, result);
-        }
-        return result;
-    }
-
-    private void CreateStripTriangles(List<Vector3> line1, List<Vector3> line2)
+    /// <param name="line1"></param>
+    /// <param name="line2"></param>
+    private void CreateStripsTriangles(List<Vector3> line1, List<Vector3> line2, char comparator = 'x')
     {
         int i = 0;  // current index of lowerLayer.vertices
         int j = 0;  // current index of upperLayer.vertices
@@ -104,7 +133,11 @@ public class River : MyMesh
 
             if (i < line1.Count - 1 && j < line2.Count - 1)
             {
-                if (line1[i + 1].x <= line2[j + 1].x)
+                if (comparator == 'x' && line1[i + 1].x <= line2[j + 1].x)
+                {
+                    lineNo = 1;
+                }
+                else if (comparator == 'z' && line1[i + 1].z >= line2[j + 1].z)
                 {
                     lineNo = 1;
                 }
@@ -144,4 +177,61 @@ public class River : MyMesh
 
         }
     }
+
+    /// <summary>
+    /// 创建水体四周三角形
+    /// </summary>
+    /// <param name="strip"></param>
+    /// <param name="corner1"></param>
+    /// <param name="corner2"></param>
+    private void CreateStripCornerTriangles(List<Vector3> strip, Vector3 corner1, Vector3 corner2)
+    {
+        int index1, index2, index3;
+        for (int i = 0; i < strip.Count - 1; i++)
+        {
+            index1 = TryAddVertex(strip[i]);
+            index2 = TryAddVertex(strip[i + 1]);
+            index3 = TryAddVertex(corner1);
+
+            indexList.Add(index1);
+            indexList.Add(index2);
+            indexList.Add(index3);
+        }
+
+        index1 = TryAddVertex(strip[strip.Count - 1]);
+        index2 = TryAddVertex(corner1);
+        index3 = TryAddVertex(corner2);
+
+        indexList.Add(index1);
+        indexList.Add(index2);
+        indexList.Add(index3);
+    }
+
+    /// <summary>
+    /// 创建水体底面四边形
+    /// </summary>
+    /// <param name="lowerTL"></param>
+    /// <param name="lowerTR"></param>
+    /// <param name="lowerBL"></param>
+    /// <param name="lowerBR"></param>
+    private void CreateQuadTriangles(Vector3 lowerTL, Vector3 lowerTR, Vector3 lowerBL, Vector3 lowerBR)
+    {
+        int index1, index2, index3;
+        index1 = TryAddVertex(lowerTL);
+        index2 = TryAddVertex(lowerTR);
+        index3 = TryAddVertex(lowerBL);
+
+        indexList.Add(index1);
+        indexList.Add(index2);
+        indexList.Add(index3);
+
+        index1 = TryAddVertex(lowerTR);
+        index2 = TryAddVertex(lowerBL);
+        index3 = TryAddVertex(lowerBR);
+
+        indexList.Add(index1);
+        indexList.Add(index2);
+        indexList.Add(index3);
+    }
+
 }

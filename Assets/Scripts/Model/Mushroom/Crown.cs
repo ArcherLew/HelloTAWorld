@@ -46,9 +46,9 @@ public class CrownLayer
 }
 
 // 树冠
-public class Crown  : MyMesh
-{   
- 
+public class Crown : MyMesh
+{
+
     int centerVerticesCount;
     int centerRadius;
 
@@ -205,18 +205,21 @@ public class Crown  : MyMesh
         int i = 0;  // current index of lowerLayer.vertices
         int j = 0;  // current index of upperLayer.vertices
 
-        if (layer1.vertices.Count > 0)
-            vertexList.Add(layer1.vertices[i].pos);
-        else
-            Debug.LogError("0");
+        // if (layer1.vertices.Count > 0)
+        //     vertexList.Add(layer1.vertices[i].pos);
+        // else
+        //     Debug.LogError("0");
 
-        if (layer2.vertices.Count > 0)
-            vertexList.Add(layer2.vertices[j].pos);
-        else
-            Debug.LogError("0");
+        // if (layer2.vertices.Count > 0)
+        //     vertexList.Add(layer2.vertices[j].pos);
+        // else
+        //     Debug.LogError("0");
 
-        int index1 = vertexList.Count - 2; // layer1里的最后一个位置在 vertexList 里的位置
-        int index2 = vertexList.Count - 1; // layer2里的最后一个位置在 vertexList 里的位置
+        // int index1 = vertexList.Count - 2; // layer1里的最后一个位置在 vertexList 里的位置
+        // int index2 = vertexList.Count - 1; // layer2里的最后一个位置在 vertexList 里的位置
+
+        int index1 = TryAddVertex(layer1.vertices[i].pos);
+        int index2 = TryAddVertex(layer2.vertices[j].pos);
 
         int first = index1; // 头尾相连
         int second = index2;
@@ -248,17 +251,21 @@ public class Crown  : MyMesh
             // 新增的位置(vertexList里的)一定是和上下两层最后一个位置(vertexList里的)组成三角形，否则就会出现交叉和破面
             indexList.Add(index1);
             indexList.Add(index2);
-            indexList.Add(vertexList.Count); // 提前算上新增的一个位置
+            // indexList.Add(vertexList.Count); // 提前算上新增的一个位置
 
             if (layerNo == 1)
             {
-                vertexList.Add(layer1.vertices[++i].pos);
-                index1 = vertexList.Count - 1;
+                // vertexList.Add(layer1.vertices[++i].pos);
+                // index1 = vertexList.Count - 1;
+                index1 = TryAddVertex(layer1.vertices[++i].pos);
+                indexList.Add(index1);
             }
             else if (layerNo == 2)
             {
-                vertexList.Add(layer2.vertices[++j].pos);
-                index2 = vertexList.Count - 1;
+                // vertexList.Add(layer2.vertices[++j].pos);
+                // index2 = vertexList.Count - 1;
+                index2 = TryAddVertex(layer2.vertices[++j].pos);
+                indexList.Add(index2);
             }
         }
 

@@ -17,7 +17,7 @@ Shader "MyWorld/River"
         Pass {
             Tags { "LightMode"="ForwardBase" }
             
-            // Cull Off
+            Cull Off
             
             CGPROGRAM  
             #pragma vertex vert 
@@ -50,10 +50,10 @@ Shader "MyWorld/River"
                 
                 float4 offset;
                 offset.xzw = float3(0.0, 0.0, 0.0);
-                offset.y = sin(_Frequency * _Time.y + v.vertex.x * _InvWaveLength + v.vertex.y * _InvWaveLength + v.vertex.z * _InvWaveLength) * _Magnitude;
+                // v.vertex.y is 0 or -10
+                offset.y = step(-5, v.vertex.y) * sin(_Frequency * _Time.y + v.vertex.x * _InvWaveLength + v.vertex.y * _InvWaveLength + v.vertex.z * _InvWaveLength) * _Magnitude;
                 o.vertex = v.vertex + offset;
                 // o.pos = UnityObjectToClipPos(v.vertex + offset);
-                
                 
                 return o;
             }
@@ -64,7 +64,7 @@ Shader "MyWorld/River"
                 //用两条边算出法线方向
                 float3 edgeA = IN[1].vertex.xyz - IN[0].vertex.xyz;
                 float3 edgeB = IN[2].vertex.xyz - IN[0].vertex.xyz;
-                float3 worldNormal = -normalize(cross(edgeA, edgeB)); // todo: negitive is not good
+                float3 worldNormal = normalize(cross(edgeB, edgeA)); // todo: ABBA
 
                 fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
                 fixed3 diffuse = _Color.rgb * fixed3(1.0, 1.0, 1.0) * saturate(dot(worldNormal, worldLightDir)); // todo: _LightColor0.rgb

@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class Util
 {
-    // todo: river face 
-    public static void FixFaceToClockWise(Vector3[] vertices, int[] triangles)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="vertices"></param>
+    /// <param name="triangles"></param>
+    /// <param name="detFactor">若是封闭图形，则默认为1；否则则取决于视角方向，-1为取反</param>
+    public static void FixFaceToClockWise(Vector3[] vertices, int[] triangles, int detFactor = 1)
     {
         Vector3 p0, p1, p2, v01, v12;
 
@@ -20,7 +25,8 @@ public class Util
             v01 = p1 - p0;
             v12 = p2 - p1;
 
-            if (Determinant(p0, p1, p2) < 0)
+            Debug.Log(detFactor);
+            if (Determinant(p0, p1, p2) <0)//* detFactor < 0)
             {
                 int temp = triangles[i + 1];
                 triangles[i + 1] = triangles[i + 2];
@@ -47,12 +53,12 @@ public class Util
         return det;
     }
 
-    public static void CreatePoint(Vector3 pos, string name = "point")
+    public static void CreatePoint(Vector3 pos, string name = "point", float size = 0.5f)
     {
         var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         obj.name = name;
         obj.GetComponent<Renderer>().material.color = Color.red;//颜色
         obj.transform.position = pos;
-        obj.transform.localScale = Vector3.one * 0.1f;
+        obj.transform.localScale = Vector3.one * size;
     }
 }
