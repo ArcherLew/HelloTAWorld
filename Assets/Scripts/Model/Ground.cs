@@ -2,15 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ground : MyMesh
+public class Ground : TerrianMesh
 {
+    public Ground(List<int> el, List<int> er, int zs, int zt)
+    {
+        Init();
+
+        zStep = zs;
+        zTop = zt;
+
+        CreateUpperVertices(el, er);
+        CreateUpperTriangles();
+
+        // detFactor = -1;
+        UpdateMesh();
+
+        gameObject.name = "ground";
+        transform.position = new Vector3(0, 0, 0);
+        // transform.localEulerAngles = new Vector3(0, 0, 180);
+    }
+/*
     int xStep = 5;
     int zStep = 0;
     int zTop = 0;
 
     List<Vector3> edgeL;
     List<Vector3> edgeR;
-
 
     public Ground(List<int> el, List<int> er, int zs, int zt)
     {
@@ -123,4 +140,5 @@ public class Ground : MyMesh
 
         }
     }
+    */
 }

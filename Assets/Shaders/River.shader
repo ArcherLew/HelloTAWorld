@@ -64,7 +64,7 @@ Shader "MyWorld/River"
                 //用两条边算出法线方向
                 float3 edgeA = IN[1].vertex.xyz - IN[0].vertex.xyz;
                 float3 edgeB = IN[2].vertex.xyz - IN[0].vertex.xyz;
-                float3 worldNormal = normalize(cross(edgeB, edgeA)); // todo: ABBA
+                float3 worldNormal = normalize(cross(edgeA, edgeB)); // todo: ABBA
 
                 fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);
                 fixed3 diffuse = _Color.rgb * fixed3(1.0, 1.0, 1.0) * saturate(dot(worldNormal, worldLightDir)); // todo: _LightColor0.rgb

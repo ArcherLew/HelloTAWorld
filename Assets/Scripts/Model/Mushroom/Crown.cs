@@ -267,6 +267,7 @@ public class Crown : MyMesh
                 index2 = TryAddVertex(layer2.vertices[++j].pos);
                 indexList.Add(index2);
             }
+            Util.FixLastTriangleFace(vertexList, indexList, 1);
         }
 
         if (index1 == first)
@@ -274,23 +275,26 @@ public class Crown : MyMesh
             indexList.Add(index1);
             indexList.Add(index2);
             indexList.Add(second);
+            Util.FixLastTriangleFace(vertexList, indexList, 1);
         }
         else if (index2 == second)
         {
             indexList.Add(index1);
             indexList.Add(index2);
             indexList.Add(first);
+            Util.FixLastTriangleFace(vertexList, indexList, 1);
         }
         else
         {
             indexList.Add(index1);
             indexList.Add(index2);
             indexList.Add(first);
-
+            Util.FixLastTriangleFace(vertexList, indexList, 1);
 
             indexList.Add(index2);
             indexList.Add(first);
             indexList.Add(second);
+            Util.FixLastTriangleFace(vertexList, indexList, 1);
         }
     }
 }

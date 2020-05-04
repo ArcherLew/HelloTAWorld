@@ -16,7 +16,7 @@ public class ModelCreator : MonoBehaviour
     void Start()
     {
         clusters = new List<GameObject>();
-        
+
         CreateTerrain();
     }
 
@@ -88,31 +88,39 @@ public class ModelCreator : MonoBehaviour
 
     void CreateGrounds(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop)
     {
-        // GameObject ground = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        // ground.name = "ground";
-        // ground.transform.localPosition = Vector3.zero;
-        // ground.transform.localScale = new Vector3(groundSize, 0.1f, groundSize);
-
-
         int xMin = -groundSize / 2;
         List<int> groundEdgeL = new List<int>();
+        List<int> groundEdgeR = new List<int>();
         for (int i = 0; i < riverEdgeL.Count; i++)
         {
-            if (riverEdgeL[i] > xMin)
+            if (riverEdgeL[i] >= xMin)
+            {
                 groundEdgeL.Add(xMin);
+                groundEdgeR.Add(riverEdgeL[i]);
+            }
+            if (riverEdgeL[i] == xMin)
+                break;
         }
 
-        Ground groundL = new Ground(groundEdgeL, riverEdgeL, zStep, zTop);
+        Ground groundL = new Ground(groundEdgeL, groundEdgeR, zStep, zTop);
+
+
+        groundEdgeL = new List<int>();
+        groundEdgeR = new List<int>();
 
         int xMax = groundSize / 2;
-        List<int> groundEdgeR = new List<int>();
         for (int i = 0; i < riverEdgeR.Count; i++)
         {
-            if (riverEdgeR[i] < xMax)
+            if (riverEdgeR[i] <= xMax)
+            {
+                groundEdgeL.Add(riverEdgeR[i]);
                 groundEdgeR.Add(xMax);
+            }
+            if (riverEdgeR[i] == xMax)
+                break;
         }
 
-        Ground groundR = new Ground(riverEdgeR, groundEdgeR, zStep, zTop);
+        Ground groundR = new Ground(groundEdgeL, groundEdgeR, zStep, zTop);
     }
 
     void CreateRiver(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop)
