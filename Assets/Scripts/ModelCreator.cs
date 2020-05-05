@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class ModelCreator : MonoBehaviour
 {
+    public int clusterCount = 1;
+    public int mrMinCount = 1;
+    public int mrMaxCount = 1;
+    
+
     int clusterIndex = 0;
     List<GameObject> clusters;
 
@@ -32,18 +37,18 @@ public class ModelCreator : MonoBehaviour
     /// </summary>
     void CreateMushrooms()
     {
-        if (clusterIndex < 10)
+        if (clusterIndex < clusterCount)
         {
             int x = Random.Range(-100, 100);
             int z = Random.Range(-100, 100);
-            int i = 24 - (Mathf.FloorToInt(z / 10) + 10);
+            int i = 24 - (Mathf.FloorToInt(z / 10) + 11);
             if (x >= riverEdgeL[i] && x <= riverEdgeR[i])
             {
-                Util.LogR(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
+                // Util.LogR(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
                 return;
             }
-            else
-                Util.Log(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
+            // else
+            //     Util.Log(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
 
             Vector3 clusterPos = new Vector3(x, 0, z);
 
@@ -51,7 +56,7 @@ public class ModelCreator : MonoBehaviour
             clusterObj.transform.position = clusterPos;
             clusters.Add(clusterObj);
 
-            int count = Random.Range(5, 20);
+            int count = Random.Range(mrMinCount, mrMaxCount);
             for (int j = 0; j < count; j++)
             {
                 Transform clusterTrans = clusterObj.transform;

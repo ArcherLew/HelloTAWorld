@@ -15,7 +15,7 @@ public class Ground : TerrianMesh
         CreateUpperTriangles();
 
         // revertNormal = -1;
-        UpdateMesh();
+        UpdateMesh("MyWorld/Ground");
 
         gameObject.name = "ground";
         transform.position = new Vector3(0, 0, 0);

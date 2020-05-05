@@ -79,8 +79,7 @@ public class Crown : MyMesh
 
     public Crown(int cvc, int cr, Vector3 lPos)
     {
-        vertexList = new List<Vector3>();
-        indexList = new List<int>();
+        Init();
 
         centerVerticesCount = cvc;
         centerRadius = cr;
@@ -205,96 +204,121 @@ public class Crown : MyMesh
         int i = 0;  // current index of lowerLayer.vertices
         int j = 0;  // current index of upperLayer.vertices
 
-        // if (layer1.vertices.Count > 0)
-        //     vertexList.Add(layer1.vertices[i].pos);
-        // else
-        //     Debug.LogError("0");
+        int index1 = -1;
+        int index2 = -1;
 
-        // if (layer2.vertices.Count > 0)
-        //     vertexList.Add(layer2.vertices[j].pos);
-        // else
-        //     Debug.LogError("0");
-
-        // int index1 = vertexList.Count - 2; // layer1里的最后一个位置在 vertexList 里的位置
-        // int index2 = vertexList.Count - 1; // layer2里的最后一个位置在 vertexList 里的位置
-
-        int index1 = TryAddVertex(layer1.vertices[i].pos);
-        int index2 = TryAddVertex(layer2.vertices[j].pos);
-
-        int first = index1; // 头尾相连
-        int second = index2;
+        int first = -1;//index1; // 头尾相连
+        int second = -1;// index2;
 
         while (i < layer1.vertices.Count - 1 || j < layer2.vertices.Count - 1)
         {
-            int layerNo = 0;
+            int curLayer = 0; // 新加入顶点所在的layer
 
             if (i < layer1.vertices.Count - 1 && j < layer2.vertices.Count - 1)
             {
                 if (layer1.vertices[i + 1].deg <= layer2.vertices[j + 1].deg)
                 {
-                    layerNo = 1;
+                    curLayer = 1;
                 }
                 else
                 {
-                    layerNo = 2;
+                    curLayer = 2;
                 }
             }
             else if (j == layer2.vertices.Count - 1)
             {
-                layerNo = 1;
+                curLayer = 1;
             }
             else // i == lowerLayer.vertices.Count - 1
             {
-                layerNo = 2;
+                curLayer = 2;
             }
 
             // 新增的位置(vertexList里的)一定是和上下两层最后一个位置(vertexList里的)组成三角形，否则就会出现交叉和破面
+
+            index1 = AddVertex(layer1.vertices[i].pos);
+            index2 = AddVertex(layer2.vertices[j].pos);
+
+            if (first == -1)
+            {
+                first = index1;
+                second = index2;
+            }
+
             indexList.Add(index1);
             indexList.Add(index2);
-            // indexList.Add(vertexList.Count); // 提前算上新增的一个位置
 
-            if (layerNo == 1)
+            if (curLayer == 1)
             {
-                // vertexList.Add(layer1.vertices[++i].pos);
-                // index1 = vertexList.Count - 1;
-                index1 = TryAddVertex(layer1.vertices[++i].pos);
+                index1 = AddVertex(layer1.vertices[++i].pos);
                 indexList.Add(index1);
             }
-            else if (layerNo == 2)
+            else if (curLayer == 2)
             {
-                // vertexList.Add(layer2.vertices[++j].pos);
-                // index2 = vertexList.Count - 1;
-                index2 = TryAddVertex(layer2.vertices[++j].pos);
+                index2 = AddVertex(layer2.vertices[++j].pos);
                 indexList.Add(index2);
             }
-            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
+
+            Vector3 normal = RecaculateFaceNormal(revertNormal);
+            // AddNormal(normal, 3);
         }
+
+        int indexA, indexB, indexC;
 
         if (index1 == first)
         {
-            indexList.Add(index1);
-            indexList.Add(index2);
-            indexList.Add(second);
-            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
+            indexA = AddVertex(vertexList[index1]);
+            indexB = AddVertex(vertexList[index2]);
+            indexC = AddVertex(vertexList[second]);
+
+            indexList.Add(indexA);
+            indexList.Add(indexB);
+            indexList.Add(indexC);
+
+            Vector3 normal = RecaculateFaceNormal(revertNormal);
+            // AddNormal(normal, 3);
         }
         else if (index2 == second)
         {
-            indexList.Add(index1);
-            indexList.Add(index2);
-            indexList.Add(first);
-            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
+            indexA = AddVertex(vertexList[index1]);
+            indexB = AddVertex(vertexList[index2]);
+            indexC = AddVertex(vertexList[first]);
+
+            indexList.Add(indexA);
+            indexList.Add(indexB);
+            indexList.Add(indexC);
+
+            Vector3 normal = RecaculateFaceNormal(revertNormal);
+            // AddNormal(normal, 3);
         }
         else
         {
-            indexList.Add(index1);
-            indexList.Add(index2);
-            indexList.Add(first);
-            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
+            if (vertexList[index1] != vertexList[index2] && vertexList[index1] != vertexList[first] && vertexList[first] != vertexList[index2])
+            {
+                indexA = AddVertex(vertexList[index1]);
+                indexB = AddVertex(vertexList[index2]);
+                indexC = AddVertex(vertexList[first]);
 
-            indexList.Add(index2);
-            indexList.Add(first);
-            indexList.Add(second);
-            Util.FixLastTriangleFace(vertexList, indexList, -revertNormal);
+                indexList.Add(indexA);
+                indexList.Add(indexB);
+                indexList.Add(indexC);
+
+                Vector3 normal = RecaculateFaceNormal(revertNormal);
+                // AddNormal(normal, 3);
+            }
+            if (vertexList[first] != vertexList[index2] && vertexList[second] != vertexList[first] && vertexList[second] != vertexList[index2])
+            {
+                indexA = AddVertex(vertexList[index2]);
+                indexB = AddVertex(vertexList[first]);
+                indexC = AddVertex(vertexList[second]);
+
+                indexList.Add(indexA);
+                indexList.Add(indexB);
+                indexList.Add(indexC);
+
+                Vector3 normal = RecaculateFaceNormal(-revertNormal);
+                // AddNormal(normal, 3);
+            }
         }
     }
 }

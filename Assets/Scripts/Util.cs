@@ -50,50 +50,19 @@ public class Util
             }
         }
     }
-
-    public static void FixLastTriangleFace(List<Vector3> vertexList, List<int> indexList, int revertNormal = 1)
-    {
-        int count = indexList.Count;
-        int i1 = indexList[count - 3];
-        int i2 = indexList[count - 2];
-        int i3 = indexList[count - 1];
-
-        Vector3 p0, p1, p2, v01, v12, vx;
-
-        p0 = vertexList[i1];
-        p1 = vertexList[i2];
-        p2 = vertexList[i3];
-
-        v01 = p1 - p0;
-        v12 = p2 - p1;
-        vx = Vector3.Cross(v01, v12);
-
-        float det = Determinant(v01, v12, vx);
-        if (det * revertNormal < 0)
-        {
-            indexList[count - 2] = i3;
-            indexList[count - 1] = i2;
-        }
-        else if (det == 0)
-        {
-            // if ((v01.z + v12.z == 0 && v01.z * v12.z == 0) || (v01.z * v12.z != 0 && v01.x / v01.z == v12.x / v12.z))
-            // {
-            Debug.LogError(v01.ToString());
-            Debug.LogError(v12.ToString());
-            Debug.LogError(string.Format("{0},{1},{2}, 三点共线", p0, p1, p2));
-            CreatePoint(p0, "dot");
-            CreatePoint(p1, "dot");
-            CreatePoint(p2, "dot");
-            // }
-        }
-    }
-
+    
     public static float Determinant(Vector3 a, Vector3 b, Vector3 c)
     {
         float det = a.x * (b.y * c.z - b.z * c.y) + a.y * (b.z * c.x - b.x * c.z) + a.z * (b.x * c.y - b.y * c.x);
         return det;
     }
 
+    public static Vector3 CloneV3(Vector3 v3)
+    {
+        Vector3 newV3 = new Vector3(v3.x, v3.y, v3.z);
+        return newV3;
+    }
+    
     public static void CreatePoint(Vector3 pos, string name = "point", float size = 0.5f)
     {
         var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);

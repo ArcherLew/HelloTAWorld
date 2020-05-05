@@ -13,8 +13,9 @@ public abstract class TerrianMesh : MyMesh
     protected List<Vector3> lowerTopStrip, lowerBottomStrip, lowerLeftStrip, lowerRightStrip;
 
 
-    protected void Init()
+    protected override void Init()
     {
+
         strips = new List<List<Vector3>>();
 
         upperLeftStrip = new List<Vector3>();
@@ -25,8 +26,7 @@ public abstract class TerrianMesh : MyMesh
         lowerLeftStrip = new List<Vector3>();
         lowerRightStrip = new List<Vector3>();
 
-        vertexList = new List<Vector3>();
-        indexList = new List<int>();
+        base.Init();
     }
 
     protected void CreateUpperVertices(List<int> el, List<int> er)
@@ -62,7 +62,6 @@ public abstract class TerrianMesh : MyMesh
             lowerLeftStrip.Add(new Vector3(v.x, -10, v.z));
         foreach (Vector3 v in upperRightStrip)
             lowerRightStrip.Add(new Vector3(v.x, -10, v.z));
-
     }
 
     protected void CreateUpperTriangles()
@@ -70,14 +69,15 @@ public abstract class TerrianMesh : MyMesh
         // 上面
         for (int i = 0; i < strips.Count - 1; i++)
         {
-            CreateStripsTriangles(strips[i], strips[i + 1], -1);
+            bool hardNormal = i == 0 || i == strips.Count - 2;
+            CreateStripsTriangles(strips[i], strips[i + 1], -1, hardNormal);
         }
 
         // 侧面上下左右
-        CreateStripsTriangles(upperTopStrip, lowerTopStrip, 1, 'x');
-        CreateStripsTriangles(upperBottomStrip, lowerBottomStrip, -1, 'x');
-        CreateStripsTriangles(upperLeftStrip, lowerLeftStrip, -1, 'z');
-        CreateStripsTriangles(upperRightStrip, lowerRightStrip, 1, 'z');
+        CreateStripsTriangles(upperTopStrip, lowerTopStrip, 1, true, 'x');
+        CreateStripsTriangles(upperBottomStrip, lowerBottomStrip, -1, true, 'x');
+        CreateStripsTriangles(upperLeftStrip, lowerLeftStrip, -1, true, 'z');
+        CreateStripsTriangles(upperRightStrip, lowerRightStrip, 1, true, 'z');
 
         // 底面
         CreateStripCornerTriangles(lowerTopStrip, lowerLeftStrip[1], lowerRightStrip[1], -1);
