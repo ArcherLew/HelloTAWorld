@@ -12,7 +12,7 @@ public class Ground : TerrianMesh
         zTop = zt;
 
         CreateUpperVertices(el, er);
-        CreateSlope();
+        // SetSlope();
         CreateUpperTriangles();
 
         // revertNormal = -1;
@@ -23,12 +23,54 @@ public class Ground : TerrianMesh
         // transform.localEulerAngles = new Vector3(0, 0, 180);
     }
 
-    private void CreateSlope()
+    private List<float> heightList = new List<float>()
+        { 1.0f,  0.985f,  0.94f,  0.866f, 0.766f, 0.642f, 0.5f, 0.342f, 0.173f, 0.087f};
+
+    private float topHeight = 3.0f;
+
+    private void SetSlope()
     {
         int z = Random.Range(0, strips.Count - 1);
         int x = Random.Range(0, strips[z].Count - 1);
 
-        // for (int i = 0;i)
+        Vector3 v = strips[z][x];
+        v.Set(v.x, topHeight, v.z);
+
+        for (int i = 1; i < heightList.Count; i++)
+        {
+            int jMax = Mathf.FloorToInt(Mathf.Sqrt(heightList.Count ^ 2 - i ^ 2));
+            int _z = z + i;
+            if (_z < strips.Count - 1)
+            {
+                for (int j = 1; j < jMax; j++)
+                {
+                    int _x = x + j;
+                    if (_x < strips[_z].Count)
+                    {
+                        int k = Mathf.FloorToInt(Mathf.Sqrt(i ^ 2 + j ^ 2));
+                        float y = heightList[k] * topHeight;
+                        v = strips[_z][_x];
+                        strips[_z][_x] = new Vector3(v.x, y, v.z);
+                    }
+                }
+            }
+
+            _z = z - i;
+            if (_z >= 0)
+            {
+                for (int j = 1; j < jMax; j++)
+                {
+                    int _x = x - j;
+                    if (_x >= 0)
+                    {
+                        int k = Mathf.FloorToInt(Mathf.Sqrt(i ^ 2 + j ^ 2));
+                        float y = heightList[k] * topHeight;
+                        v = strips[_z][_x];
+                        strips[_z][_x] = new Vector3(v.x, y, v.z);
+                    }
+                }
+            }
+        }
     }
     /*
         int xStep = 5;

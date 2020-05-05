@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModelCreator : MonoBehaviour
+public class SceneManager : MonoBehaviour
 {
     int clusterCount = 30;
     int mrMinCount = 1;
@@ -20,10 +20,15 @@ public class ModelCreator : MonoBehaviour
 
     int groundSize = 240;
 
+    Camera mainCamera, roleCamera;
+
     // Start is called before the first frame update
     void Start()
     {
         clusters = new List<GameObject>();
+
+        mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+        roleCamera = GameObject.Find("/Role/RoleCamera").GetComponent<Camera>();
 
         CreateTerrain();
         CreateSkyBox();
@@ -33,6 +38,17 @@ public class ModelCreator : MonoBehaviour
     void Update()
     {
         CreateMushrooms();
+
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            mainCamera.enabled = true;
+            roleCamera.enabled = false;
+        }
+        else if (Input.GetKey(KeyCode.Alpha2))
+        {
+            mainCamera.enabled = false;
+            roleCamera.enabled = true;
+        }
     }
 
     /// <summary>

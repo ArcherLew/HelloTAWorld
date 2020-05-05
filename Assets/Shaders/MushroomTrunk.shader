@@ -7,7 +7,7 @@
 
     SubShader
     {
-        Tags {"Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque"}
+        Tags {"Queue"="Geometry" "RenderType"="Opaque"}
 
         Pass {
             Tags { "LightMode"="ForwardBase" }
@@ -51,5 +51,5 @@
             ENDCG
         }
     }
-    FallBack "Transparent/VertexLit"
+    FallBack "VertexLit"
 }

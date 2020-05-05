@@ -11,7 +11,7 @@ Shader "MyWorld/Ground"
 
     SubShader
     {
-        Tags {"Queue"="Geometry" "IgnoreProjector"="True" "RenderType"="Opaque"}
+        Tags {"RenderType"="Opaque"}
 
         Pass {
             Tags { "LightMode"="ForwardBase" }
@@ -19,10 +19,15 @@ Shader "MyWorld/Ground"
             Cull Off
             
             CGPROGRAM  
+
+            #pragma multi_compile_fwdbase	
+
             #pragma vertex vert 
             #pragma fragment frag
             
             #include "UnityCG.cginc" 
+			#include "Lighting.cginc"
+			#include "AutoLight.cginc"
             
             fixed4 _Color;
             
@@ -35,6 +40,7 @@ Shader "MyWorld/Ground"
                 float4 pos : SV_POSITION;
                 // float3 normal : TEXCOORD0;
                 float4 col : COLOR;
+				SHADOW_COORDS(0)
             };
             
             v2f vert(a2v v) {
@@ -45,15 +51,20 @@ Shader "MyWorld/Ground"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.col = fixed4(diffuse, 1.0);
                 
+			 	TRANSFER_SHADOW(o);
+                
                 return o;
             }
 
-            fixed4 frag(v2f i) : SV_Target {			
-                return i.col;
+            fixed4 frag(v2f i) : SV_Target {	
+
+				fixed shadow = SHADOW_ATTENUATION(i);		
+
+                return fixed4(i.col.rgb * shadow, 1.0);
             } 
             
             ENDCG
         }
     }
-    FallBack "Transparent/VertexLit"
+    FallBack "VertexLit"
 }
