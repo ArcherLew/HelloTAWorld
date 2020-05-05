@@ -1,12 +1,8 @@
-﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
-
-Shader "MyWorld/Ground"
+﻿Shader "MyWorld/Mushroom Trunk"
 {
     Properties
     {
-        _Color ("Color", Color) = (0.095, 0.153, 0.170, 1)
+        _Color ("Color", Color) = (0.133, 0.15, 0.2, 1)
     }
 
     SubShader
@@ -41,7 +37,7 @@ Shader "MyWorld/Ground"
                 v2f o;
                 float3 worldNormal = mul(v.normal, (float3x3)unity_WorldToObject);
                 fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);                
-                fixed3 diffuse = _Color.rgb * fixed3(1.0, 1.0, 1.0) * saturate(dot(worldNormal, worldLightDir)); // todo: light
+                fixed3 diffuse = _Color.rgb * saturate(dot(worldNormal, worldLightDir)); // todo: light
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.col = fixed4(diffuse, 1.0);
                 

@@ -2,7 +2,7 @@
 {
     Properties
     {
-        _Color ("Color", Color) = (0, 0.66, 0.9, 1)
+        _Color ("Color", Color) = (0.35, 0.557, 0.851, 1)
         _Magnitude ("Distortion Magnitude", Float) = 2
         _Frequency ("Distortion Frequency", Float) = 2
         _InvWaveLength ("Distortion Inverse Wave Length", Float) = 2

@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class ModelCreator : MonoBehaviour
 {
-    public int clusterCount = 1;
-    public int mrMinCount = 1;
-    public int mrMaxCount = 1;
-    
+    int clusterCount = 30;
+    int mrMinCount = 1;
+    int mrMaxCount = 10;
+    bool showTerrian = true;
+
 
     int clusterIndex = 0;
     List<GameObject> clusters;
+    int clusterRadius = 5;
 
     List<int> riverEdgeL;
     List<int> riverEdgeR;
@@ -24,6 +26,7 @@ public class ModelCreator : MonoBehaviour
         clusters = new List<GameObject>();
 
         CreateTerrain();
+        CreateSkyBox();
     }
 
     // Update is called once per frame
@@ -41,7 +44,7 @@ public class ModelCreator : MonoBehaviour
         {
             int x = Random.Range(-100, 100);
             int z = Random.Range(-100, 100);
-            int i = 24 - (Mathf.FloorToInt(z / 10) + 11);
+            int i = 48 - (Mathf.FloorToInt(z / 5) + 20);
             if (x >= riverEdgeL[i] && x <= riverEdgeR[i])
             {
                 // Util.LogR(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
@@ -60,7 +63,7 @@ public class ModelCreator : MonoBehaviour
             for (int j = 0; j < count; j++)
             {
                 Transform clusterTrans = clusterObj.transform;
-                Vector3 lPos = new Vector3(Random.Range(-3.0f, 3.0f), 0, Random.Range(-3.0f, 3.0f));
+                Vector3 lPos = new Vector3(Random.Range(-clusterRadius, clusterRadius), 0, Random.Range(-clusterRadius, clusterRadius));
                 Mushroom tree = new Mushroom(lPos);
                 tree.transform.SetParent(clusterTrans);
                 tree.transform.localPosition = lPos;
@@ -81,14 +84,14 @@ public class ModelCreator : MonoBehaviour
         int w = 50;
         int x1 = -100;
         int x2 = 0;
-        int zStep = 10;
+        int zStep = 5;
         int zTop = groundSize / 2;
 
-        for (int z = 120; z >= -120; z -= 10)
+        for (int z = 120; z >= -120; z -= zStep)
         {
-            w += Random.Range(-10, 10);
+            w += Random.Range(-5, 6);
             w = Mathf.Max(w, 10);
-            x1 += Random.Range(-10, 10) + 10;
+            x1 += Random.Range(-5, 5) + 5;
             x1 = Mathf.Min(Mathf.Max(x1, -100), 100);
             x2 = x1 + w;
             x2 = Mathf.Min(Mathf.Max(x2, -100), 120);
@@ -101,8 +104,11 @@ public class ModelCreator : MonoBehaviour
             // Util.CreatePoint(posR);
         }
 
-        CreateGrounds(riverEdgeL, riverEdgeR, zStep, zTop);
-        CreateRiver(riverEdgeL, riverEdgeR, zStep, zTop, -2);
+        if (showTerrian)
+        {
+            CreateGrounds(riverEdgeL, riverEdgeR, zStep, zTop);
+            CreateRiver(riverEdgeL, riverEdgeR, zStep, zTop, -2);
+        }
     }
 
     /// <summary>
@@ -159,6 +165,18 @@ public class ModelCreator : MonoBehaviour
         }
 
         Ground groundR = new Ground(groundEdgeL, groundEdgeR, zStep, zTop);
+    }
+
+    void CreateSkyBox()
+    {
+        Material skybox = new Material(Shader.Find("Skybox/Procedural"));
+        skybox.SetFloat("_SunSize", 1.0f);
+        skybox.SetFloat("_SunSizeConvergence", 5.0f);
+        skybox.SetFloat("_AtmosphereThickness", 0.2f);
+        skybox.SetFloat("_Exposure", 0.15f);
+        skybox.SetColor("_SkyTint", new Color(0.184f, 0.494f, 1.0f));
+        skybox.SetColor("_GroundColor", new Color(0.1f, 0.1f, 0.1f));
+        RenderSettings.skybox = skybox;
     }
 
 }

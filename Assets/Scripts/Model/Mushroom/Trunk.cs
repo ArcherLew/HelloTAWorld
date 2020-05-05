@@ -23,7 +23,9 @@ public class Trunk
     {
         float length = lPos.magnitude;
         gameObject.name = "trunk";
-        gameObject.GetComponent<Renderer>().material.color = Color.red;//颜色        
+        MeshRenderer mr = gameObject.GetComponent<MeshRenderer>();
+        mr.sharedMaterial = new Material(Shader.Find("MyWorld/Mushroom Trunk"));
+
         transform.localPosition = lPos / 2;
         transform.localScale = new Vector3(d, length, d);
         transform.localRotation = Quaternion.FromToRotation(Vector3.up, lPos);

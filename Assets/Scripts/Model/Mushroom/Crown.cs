@@ -131,11 +131,25 @@ public class Crown : MyMesh
         //     }
         // }
 
-        UpdateMesh();
+        UpdateMesh("MyWorld/Mushroom Crown");
+
+        meshRenderer.material.SetColor("_UpperColor", crownColors[Random.Range(0, 4)]);
+        meshRenderer.material.SetFloat("_GlimOffset", Random.Range(0.0f, 10.0f));
+        meshRenderer.material.SetFloat("_DarkPeriod", 0.95f);
+
 
         gameObject.name = "crown";
         transform.localPosition = lPos;
+        transform.localRotation = Quaternion.FromToRotation(Vector3.up, lPos);
     }
+
+    static private List<Color> crownColors = new List<Color>() {
+        new Color(0.137f, 0.235f, 0.541f),
+        new Color(0.208f, 0.196f, 0.482f),
+        new Color(0.2f, 0.432f, 0.678f),
+        new Color(0.2f, 0.27f, 0.58f),
+        new Color(0.173f, 0.404f, 0.58f),
+    };
 
     private void CreateLayerVertices(CrownLayer layer)
     {

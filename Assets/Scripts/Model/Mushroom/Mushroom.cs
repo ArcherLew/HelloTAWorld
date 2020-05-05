@@ -28,21 +28,17 @@ public class Mushroom
     {
         gameObject.name = "tree";
 
-        Vector3 centerPos = Vector3.zero;
-        int crownCount = 1; // todo: count random, pos random
-        for (int i = 0; i < crownCount; i++)
-        {
-            float x = Random.Range(-3.0f, 3.0f);
-            float y = Random.Range(5.0f, 20.0f);
-            float z = Random.Range(-3.0f, 3.0f);
-            Vector3 crownPos = new Vector3(x, y, z) + crownOffset * Random.Range(0.0f, 1.0f);
-            centerPos += crownPos;
-            Crown tc = new Crown(8, 4, crownPos);
-            tc.transform.SetParent(transform);
-        }
+
+        float x = Random.Range(-3.0f, 3.0f);
+        float y = Random.Range(5.0f, 20.0f);
+        float z = Random.Range(-3.0f, 3.0f);
+        Vector3 crownPos = new Vector3(x, y, z) + crownOffset * Random.Range(0.0f, 1.0f);
+        Crown tc = new Crown(8, 4, crownPos);
+        tc.transform.SetParent(transform);
+
 
         float d = Random.Range(0.5f, 1.0f);
-        Trunk tt = new Trunk(centerPos / crownCount, d);
+        Trunk tt = new Trunk(crownPos, d);
         tt.transform.SetParent(transform);
     }
 }

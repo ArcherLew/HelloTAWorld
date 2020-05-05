@@ -38,7 +38,7 @@ public abstract class MyMesh
 
     protected void UpdateMesh(string shaderName = "Diffuse")
     {
-        Util.LogR(vertexList.Count, normalList.Count);
+        // Util.LogR(vertexList.Count, normalList.Count);
         // return;
 
         Vector3[] vertices = vertexList.ToArray();
@@ -245,12 +245,12 @@ public abstract class MyMesh
     protected int TryAddVertex(Vector3 v)
     {
         int result;
-        Util.Log(v.GetHashCode());
+        // Util.Log(v.GetHashCode());
         if (!vertex2Index.TryGetValue(v, out result))
         {
             // Util.Log("xxxxxxxxx");
             vertexList.Add(v);
-            Util.Log("<color=lime>", vertexList.Count, "</color>");
+            // Util.Log("<color=lime>", vertexList.Count, "</color>");
             result = vertexList.Count - 1;
             vertex2Index.Add(v, result);
         }
@@ -273,7 +273,7 @@ public abstract class MyMesh
         for (int i = 0; i < count; i++)
         {
             normalList.Add(normal);
-            Util.Log("<color=red>", normalList.Count, "</color>");
+            // Util.Log("<color=red>", normalList.Count, "</color>");
         }
     }
 
