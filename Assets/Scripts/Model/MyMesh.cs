@@ -26,14 +26,14 @@ public abstract class MyMesh
 
     protected MeshRenderer meshRenderer;
 
-    protected int detFactor = 1;
+    protected int revertNormal = 1;
 
     protected void UpdateMesh(string shaderName = "Diffuse")
     {
         Vector3[] vertices = vertexList.ToArray();
         int[] indices = indexList.ToArray();
 
-        // Util.FixFaceToClockWise(vertices, indices, detFactor);
+        // Util.FixFaceToClockWise(vertices, indices, revertNormal);
 
         mesh = new Mesh();
         mesh.vertices = vertices;
@@ -71,7 +71,7 @@ public abstract class MyMesh
     /// </summary>
     /// <param name="line1"></param>
     /// <param name="line2"></param>
-    protected void CreateStripsTriangles(List<Vector3> line1, List<Vector3> line2, int detFactor, char comparator = 'x')
+    protected void CreateStripsTriangles(List<Vector3> line1, List<Vector3> line2, int revertNormal, char comparator = 'x')
     {
         int i = 0;  // current index of lowerLayer.vertices
         int j = 0;  // current index of upperLayer.vertices
@@ -140,7 +140,7 @@ public abstract class MyMesh
                 indexList.Add(index2);
             }
 
-            Util.FixLastTriangleFace(vertexList, indexList, detFactor);
+            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
         }
     }
 
@@ -150,7 +150,7 @@ public abstract class MyMesh
     /// <param name="strip"></param>
     /// <param name="v1"></param>
     /// <param name="v2"></param>
-    protected void CreateStripCornerTriangles(List<Vector3> strip, Vector3 v1, Vector3 v2, int detFactor)
+    protected void CreateStripCornerTriangles(List<Vector3> strip, Vector3 v1, Vector3 v2, int revertNormal)
     {
         int index1, index2, index3;
         for (int i = 0; i < strip.Count - 1; i++)
@@ -163,7 +163,7 @@ public abstract class MyMesh
             indexList.Add(index2);
             indexList.Add(index3);
 
-            Util.FixLastTriangleFace(vertexList, indexList, detFactor);
+            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
         }
 
         index1 = TryAddVertex(strip[strip.Count - 1]);
@@ -173,7 +173,7 @@ public abstract class MyMesh
         indexList.Add(index1);
         indexList.Add(index2);
         indexList.Add(index3);
-        Util.FixLastTriangleFace(vertexList, indexList, -detFactor);
+        Util.FixLastTriangleFace(vertexList, indexList, -revertNormal);
     }
 
     /// <summary>
@@ -183,7 +183,7 @@ public abstract class MyMesh
     /// <param name="v2"></param>
     /// <param name="v3"></param>
     /// <param name="v4"></param>
-    protected void CreateQuadTriangles(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, int detFactor)
+    protected void CreateQuadTriangles(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, int revertNormal)
     {
         int index1, index2, index3;
         index1 = TryAddVertex(v1);
@@ -193,7 +193,7 @@ public abstract class MyMesh
         indexList.Add(index1);
         indexList.Add(index2);
         indexList.Add(index3);
-        Util.FixLastTriangleFace(vertexList, indexList, detFactor);
+        Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
 
         index1 = TryAddVertex(v2);
         index2 = TryAddVertex(v3);
@@ -202,7 +202,7 @@ public abstract class MyMesh
         indexList.Add(index1);
         indexList.Add(index2);
         indexList.Add(index3);
-        Util.FixLastTriangleFace(vertexList, indexList, -detFactor);
+        Util.FixLastTriangleFace(vertexList, indexList, -revertNormal);
     }
 
 }

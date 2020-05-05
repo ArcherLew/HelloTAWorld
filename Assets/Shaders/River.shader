@@ -51,7 +51,7 @@ Shader "MyWorld/River"
                 float4 offset;
                 offset.xzw = float3(0.0, 0.0, 0.0);
                 // v.vertex.y is 0 or -10
-                offset.y = step(-5, v.vertex.y) * sin(_Frequency * _Time.y + v.vertex.x * _InvWaveLength + v.vertex.y * _InvWaveLength + v.vertex.z * _InvWaveLength) * _Magnitude;
+                offset.y = step(-9, v.vertex.y) * sin(_Frequency * _Time.y + v.vertex.x * _InvWaveLength + v.vertex.y * _InvWaveLength + v.vertex.z * _InvWaveLength) * _Magnitude;
                 o.vertex = v.vertex + offset;
                 // o.pos = UnityObjectToClipPos(v.vertex + offset);
                 

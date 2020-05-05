@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class ModelCreator : MonoBehaviour
 {
-    int treeIndex = 0;
     int clusterIndex = 0;
     List<GameObject> clusters;
 
+    List<int> riverEdgeL;
+    List<int> riverEdgeR;
     List<Mushroom> trees = new List<Mushroom>();
 
     int groundSize = 240;
@@ -23,41 +24,54 @@ public class ModelCreator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (clusterIndex < 10 && false)
-        {
-            Vector3 clusterPos = new Vector3(Random.Range(-100.0f, 100.0f), 0, Random.Range(-100.0f, 100.0f));
-            if (clusters.Count <= clusterIndex)
-            {
-                GameObject clusterObj = new GameObject("cluster_" + clusterIndex);
-                clusterObj.transform.position = clusterPos;
-                clusters.Add(clusterObj);
-            }
+        CreateMushrooms();
+    }
 
-            if (treeIndex < 10)
+    /// <summary>
+    /// 随机生成蘑菇
+    /// </summary>
+    void CreateMushrooms()
+    {
+        if (clusterIndex < 10)
+        {
+            int x = Random.Range(-100, 100);
+            int z = Random.Range(-100, 100);
+            int i = 24 - (Mathf.FloorToInt(z / 10) + 10);
+            if (x >= riverEdgeL[i] && x <= riverEdgeR[i])
             {
-                Transform clusterTrans = clusters[clusterIndex].transform;
-                treeIndex++;
+                Util.LogR(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
+                return;
+            }
+            else
+                Util.Log(clusterIndex, x, z, i, riverEdgeL[i], riverEdgeR[i]);
+
+            Vector3 clusterPos = new Vector3(x, 0, z);
+
+            GameObject clusterObj = new GameObject("cluster_" + clusterIndex);
+            clusterObj.transform.position = clusterPos;
+            clusters.Add(clusterObj);
+
+            int count = Random.Range(5, 20);
+            for (int j = 0; j < count; j++)
+            {
+                Transform clusterTrans = clusterObj.transform;
                 Vector3 lPos = new Vector3(Random.Range(-3.0f, 3.0f), 0, Random.Range(-3.0f, 3.0f));
                 Mushroom tree = new Mushroom(lPos);
                 tree.transform.SetParent(clusterTrans);
                 tree.transform.localPosition = lPos;
             }
-            else
-            {
-                treeIndex = 0;
-                clusterIndex++;
-            }
-        }
 
-        // if (Mathf.Floor(Time.realtimeSinceStartup) % 3 == 0)
-        //     CreateRiver();
+            clusterIndex++;
+        }
     }
 
-
+    /// <summary>
+    /// 创建地形
+    /// </summary>
     void CreateTerrain()
     {
-        List<int> riverEdgeL = new List<int>();
-        List<int> riverEdgeR = new List<int>();
+        riverEdgeL = new List<int>();
+        riverEdgeR = new List<int>();
 
         int w = 50;
         int x1 = -100;
@@ -83,9 +97,28 @@ public class ModelCreator : MonoBehaviour
         }
 
         CreateGrounds(riverEdgeL, riverEdgeR, zStep, zTop);
-        CreateRiver(riverEdgeL, riverEdgeR, zStep, zTop);
+        CreateRiver(riverEdgeL, riverEdgeR, zStep, zTop, -2);
     }
 
+    /// <summary>
+    /// 随机生成河流
+    /// </summary>
+    /// <param name="riverEdgeL"></param>
+    /// <param name="riverEdgeR"></param>
+    /// <param name="zStep"></param>
+    /// <param name="zTop"></param>
+    void CreateRiver(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop, int yUpper)
+    {
+        River river = new River(riverEdgeL, riverEdgeR, zStep, zTop, yUpper);
+    }
+
+    /// <summary>
+    /// 随机生成陆地
+    /// </summary>
+    /// <param name="riverEdgeL"></param>
+    /// <param name="riverEdgeR"></param>
+    /// <param name="zStep"></param>
+    /// <param name="zTop"></param>
     void CreateGrounds(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop)
     {
         int xMin = -groundSize / 2;
@@ -123,8 +156,4 @@ public class ModelCreator : MonoBehaviour
         Ground groundR = new Ground(groundEdgeL, groundEdgeR, zStep, zTop);
     }
 
-    void CreateRiver(List<int> riverEdgeL, List<int> riverEdgeR, int zStep, int zTop)
-    {
-        River river = new River(riverEdgeL, riverEdgeR, zStep, zTop);
-    }
 }

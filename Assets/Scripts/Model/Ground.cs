@@ -14,7 +14,7 @@ public class Ground : TerrianMesh
         CreateUpperVertices(el, er);
         CreateUpperTriangles();
 
-        // detFactor = -1;
+        // revertNormal = -1;
         UpdateMesh();
 
         gameObject.name = "ground";
@@ -47,7 +47,7 @@ public class Ground : TerrianMesh
 
         CreateStripTriangles(edgeL, edgeR);
 
-        detFactor = -1;
+        revertNormal = -1;
         UpdateMesh();
 
         gameObject.name = "ground";

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 public class Util
@@ -9,8 +10,8 @@ public class Util
     /// </summary>
     /// <param name="vertices"></param>
     /// <param name="triangles"></param>
-    /// <param name="detFactor">若是封闭图形，则默认为1；否则则取决于视角方向，-1为取反</param>
-    public static void FixFaceToClockWise(Vector3[] vertices, int[] triangles, int detFactor = 1)
+    /// <param name="revertNormal">若是封闭图形，则默认为1；否则则取决于视角方向，-1为取反</param>
+    public static void FixFaceToClockWise(Vector3[] vertices, int[] triangles, int revertNormal = 1)
     {
         Vector3 p0, p1, p2, v01, v12;
 
@@ -26,10 +27,10 @@ public class Util
             v12 = p2 - p1;
             Vector3 vx = Vector3.Cross(v01, v12);
 
-            // Debug.Log(detFactor);
+            // Debug.Log(revertNormal);
             // float det = Determinant(p0, p1, p2);
             float det = Determinant(v01, v12, vx);
-            if (det * detFactor < 0)
+            if (det * revertNormal < 0)
             {
                 int temp = triangles[i + 1];
                 triangles[i + 1] = triangles[i + 2];
@@ -50,7 +51,7 @@ public class Util
         }
     }
 
-    public static void FixLastTriangleFace(List<Vector3> vertexList, List<int> indexList, int detFactor = 1)
+    public static void FixLastTriangleFace(List<Vector3> vertexList, List<int> indexList, int revertNormal = 1)
     {
         int count = indexList.Count;
         int i1 = indexList[count - 3];
@@ -68,7 +69,7 @@ public class Util
         vx = Vector3.Cross(v01, v12);
 
         float det = Determinant(v01, v12, vx);
-        if (det * detFactor < 0)
+        if (det * revertNormal < 0)
         {
             indexList[count - 2] = i3;
             indexList[count - 1] = i2;
@@ -100,5 +101,25 @@ public class Util
         obj.GetComponent<Renderer>().material.color = Color.red;//颜色
         obj.transform.position = pos;
         obj.transform.localScale = Vector3.one * size;
+    }
+
+    public static void Log(params object[] args)
+    {
+        string str = GetLogString(args);
+        Debug.Log(str.ToString());
+    }
+
+    public static void LogR(params object[] args)
+    {
+        string str = GetLogString(args);
+        Debug.LogError(str.ToString());
+    }
+
+    public static string GetLogString(params object[] args)
+    {
+        StringBuilder sb = new StringBuilder();
+        foreach (object o in args)
+            sb.Append(o.ToString()).Append("  ");
+        return sb.ToString();
     }
 }

@@ -4,17 +4,18 @@ using UnityEngine;
 
 public class River : TerrianMesh
 {
-    public River(List<int> el, List<int> er, int zs, int zt)
+    public River(List<int> el, List<int> er, int zs, int zt, int yu)
     {
         Init();
 
         zStep = zs;
         zTop = zt;
+        yUpper = yu;
 
         CreateUpperVertices(el, er);
         CreateUpperTriangles();
 
-        // detFactor = -1;
+        // revertNormal = -1;
         UpdateMesh("MyWorld/River");
 
         gameObject.name = "river";

@@ -112,7 +112,7 @@ public class Crown : MyMesh
             CrownLayer layer1 = i > 0 ? topLayers[i - 1] : centerLayer;
             CrownLayer layer2 = topLayers[i];
 
-            CreateTriangles(layer1, layer2);
+            CreateTriangles(layer1, layer2, 1);
         }
 
         // 构造下半部分三角形顶点序列
@@ -121,7 +121,7 @@ public class Crown : MyMesh
             CrownLayer layer1 = i > 0 ? bottomLayers[i - 1] : centerLayer;
             CrownLayer layer2 = bottomLayers[i];
 
-            CreateTriangles(layer1, layer2);
+            CreateTriangles(layer1, layer2, -1);
         }
 
         // foreach (CrownLayer layer in topLayers)
@@ -200,7 +200,7 @@ public class Crown : MyMesh
     /// </summary>
     /// <param name="layer1"></param>
     /// <param name="layer2"></param>
-    private void CreateTriangles(CrownLayer layer1, CrownLayer layer2)
+    private void CreateTriangles(CrownLayer layer1, CrownLayer layer2, int revertNormal = 1)
     {
         int i = 0;  // current index of lowerLayer.vertices
         int j = 0;  // current index of upperLayer.vertices
@@ -267,7 +267,7 @@ public class Crown : MyMesh
                 index2 = TryAddVertex(layer2.vertices[++j].pos);
                 indexList.Add(index2);
             }
-            Util.FixLastTriangleFace(vertexList, indexList, 1);
+            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
         }
 
         if (index1 == first)
@@ -275,26 +275,26 @@ public class Crown : MyMesh
             indexList.Add(index1);
             indexList.Add(index2);
             indexList.Add(second);
-            Util.FixLastTriangleFace(vertexList, indexList, 1);
+            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
         }
         else if (index2 == second)
         {
             indexList.Add(index1);
             indexList.Add(index2);
             indexList.Add(first);
-            Util.FixLastTriangleFace(vertexList, indexList, 1);
+            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
         }
         else
         {
             indexList.Add(index1);
             indexList.Add(index2);
             indexList.Add(first);
-            Util.FixLastTriangleFace(vertexList, indexList, 1);
+            Util.FixLastTriangleFace(vertexList, indexList, revertNormal);
 
             indexList.Add(index2);
             indexList.Add(first);
             indexList.Add(second);
-            Util.FixLastTriangleFace(vertexList, indexList, 1);
+            Util.FixLastTriangleFace(vertexList, indexList, -revertNormal);
         }
     }
 }

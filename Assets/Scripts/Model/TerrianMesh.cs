@@ -7,9 +7,11 @@ public abstract class TerrianMesh : MyMesh
     protected int xStep = 5;
     protected int zStep = 0;
     protected int zTop = 0;
+    protected int yUpper = 0;
     protected List<List<Vector3>> strips;
     protected List<Vector3> upperTopStrip, upperBottomStrip, upperLeftStrip, upperRightStrip;
     protected List<Vector3> lowerTopStrip, lowerBottomStrip, lowerLeftStrip, lowerRightStrip;
+
 
     protected void Init()
     {
@@ -38,13 +40,13 @@ public abstract class TerrianMesh : MyMesh
 
             for (int x = el[i]; x <= er[i]; x += xStep)
             {
-                strip.Add(new Vector3(x, 0, z));
+                strip.Add(new Vector3(x, yUpper, z));
 
                 if (x == el[i])
                     upperLeftStrip.Add(strip[strip.Count - 1]);
             }
             if (strip[strip.Count - 1].x != er[i])
-                strip.Add(new Vector3(er[i], 0, z));
+                strip.Add(new Vector3(er[i], yUpper, z));
 
             upperRightStrip.Add(strip[strip.Count - 1]);
         }
