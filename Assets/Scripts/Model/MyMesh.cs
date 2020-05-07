@@ -60,6 +60,8 @@ public abstract class MyMesh
         gameObject.AddComponent<MeshFilter>().mesh = mesh;
         meshRenderer = gameObject.AddComponent<MeshRenderer>();
         meshRenderer.material = new Material(Shader.Find(shaderName));
+
+        gameObject.AddComponent<MeshCollider>().convex = true;
     }
 
     /// <summary>
@@ -216,9 +218,9 @@ public abstract class MyMesh
             Debug.LogError(v01.ToString());
             Debug.LogError(v12.ToString());
             Debug.LogError(string.Format("{0},{1},{2}, 三点共线", p0, p1, p2));
-            Util.CreatePoint(p0, "dot");
-            Util.CreatePoint(p1, "dot");
-            Util.CreatePoint(p2, "dot");
+            DrawTool.DrawPoint(p0, "dot");
+            DrawTool.DrawPoint(p1, "dot");
+            DrawTool.DrawPoint(p2, "dot");
             // }
             return Vector3.zero;
         }

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿                                                     using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -139,6 +139,7 @@ public class Crown : MyMesh
 
 
         gameObject.name = "crown";
+        gameObject.layer = LayerMask.NameToLayer("Crown");
         transform.localPosition = lPos;
         transform.localRotation = Quaternion.FromToRotation(Vector3.up, lPos);
     }

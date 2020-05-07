@@ -16,8 +16,8 @@ public class Role : MonoBehaviour
         MouseY = 2
     }
     public RotationAxes m_axes = RotationAxes.MouseXAndY;
-    public float m_sensitivityX = 10f;
-    public float m_sensitivityY = 10f;
+    public float m_sensitivityX = 5f;
+    public float m_sensitivityY = 5f;
     // 水平方向的 镜头转向
     public float m_minimumX = -360f;
     public float m_maximumX = 360f;
@@ -28,15 +28,80 @@ public class Role : MonoBehaviour
 
     Rigidbody rigidBody;
 
+    Camera mainCamera, roleCamera;
+    Camera currentCamera;
+    int cameraState = 1;
+
     void Start()
     {
         // rigidBody = GetComponent<Rigidbody>();
         // rigidBody.freezeRotation = true;
+        mainCamera = GameObject.Find("MainCamera").GetComponent<Camera>();
+        roleCamera = GameObject.Find("/Role/RoleCamera").GetComponent<Camera>();
+        currentCamera = mainCamera;
+        cameraState = 1;
+
+        crownLayer = LayerMask.NameToLayer("Crown");
+        Util.LogR("crownLayer", crownLayer);
     }
 
     void Update()
     {
-        // body move
+        CameraHandler();
+        ClickHandler();
+
+        if (cameraState == 2)
+        {
+            MoveHandler();
+            ViewHandler();
+        }
+    }
+
+    private RaycastHit hit;
+    private int crownLayer;
+
+    void ClickHandler()
+    {
+        if (Input.GetMouseButtonUp(0))
+        {
+            Util.Log("mouse 0");
+
+            // 镜头中心开火
+            // Vector3 pos = currentCamera.transform.position;
+            // Vector3 dir = currentCamera.transform.TransformDirection(Vector3.forward);
+            // DrawTool.DrawArrow(pos, pos + dir * 1000, Color.red, 1f, "arrow");
+
+            // 鼠标点选开火
+            Ray ray = currentCamera.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~crownLayer))
+            {
+                GameObject obj = hit.transform.gameObject;
+                obj.GetComponent<MeshRenderer>().material.SetColor("_UpperColor", Color.red);
+                Util.Log(obj.name);
+            }
+        }
+    }
+
+    void CameraHandler()
+    {
+        if (Input.GetKey(KeyCode.Alpha1))
+        {
+            mainCamera.enabled = true;
+            roleCamera.enabled = false;
+            currentCamera = mainCamera;
+            cameraState = 1;
+        }
+        else if (Input.GetKey(KeyCode.Alpha2))
+        {
+            mainCamera.enabled = false;
+            roleCamera.enabled = true;
+            currentCamera = roleCamera;
+            cameraState = 2;
+        }
+    }
+
+    void MoveHandler()
+    {
         CharacterController controller = GetComponent<CharacterController>();
         if (controller.isGrounded)
         {
@@ -48,8 +113,10 @@ public class Role : MonoBehaviour
         }
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
+    }
 
-        // view rotate
+    void ViewHandler()
+    {
         if (m_axes == RotationAxes.MouseXAndY)
         {
             float m_rotationX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * m_sensitivityX;

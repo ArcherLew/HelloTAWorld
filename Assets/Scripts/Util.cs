@@ -43,14 +43,14 @@ public class Util
                 Debug.LogError(v01.ToString());
                 Debug.LogError(v12.ToString());
                 Debug.LogError(string.Format("{0},{1},{2}, 三点共线", p0, p1, p2));
-                CreatePoint(p0, "dot");
-                CreatePoint(p1, "dot");
-                CreatePoint(p2, "dot");
+                DrawTool.DrawPoint(p0, "dot");
+                DrawTool.DrawPoint(p1, "dot");
+                DrawTool.DrawPoint(p2, "dot");
                 // }
             }
         }
     }
-    
+
     public static float Determinant(Vector3 a, Vector3 b, Vector3 c)
     {
         float det = a.x * (b.y * c.z - b.z * c.y) + a.y * (b.z * c.x - b.x * c.z) + a.z * (b.x * c.y - b.y * c.x);
@@ -61,15 +61,6 @@ public class Util
     {
         Vector3 newV3 = new Vector3(v3.x, v3.y, v3.z);
         return newV3;
-    }
-    
-    public static void CreatePoint(Vector3 pos, string name = "point", float size = 0.5f)
-    {
-        var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        obj.name = name;
-        obj.GetComponent<Renderer>().material.color = Color.red;//颜色
-        obj.transform.position = pos;
-        obj.transform.localScale = Vector3.one * size;
     }
 
     public static void Log(params object[] args)
