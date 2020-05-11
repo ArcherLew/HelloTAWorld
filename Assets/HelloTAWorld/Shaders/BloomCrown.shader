@@ -63,7 +63,7 @@
             outMrt frag(v2f i) : SV_Target {
                 // 蘑菇背面颜色和光照有关			
                 fixed3 worldNormal = normalize(i.worldNormal);
-                fixed3 worldLightDir = normalize(_WorldSpaceLightPos0.xyz);                
+                fixed3 worldLightDir = normalize(_WowrldSpaceLightPos0.xyz);                
                 float lambert = saturate(dot(worldNormal, worldLightDir));
                 fixed4 col = _CrownColor * i.glimmer * (0.5 * lambert + 0.5);
                 

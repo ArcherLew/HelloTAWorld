@@ -20,7 +20,7 @@ Shader "MyWorld/PostProc Bloom"  {
 	half _Scale;
 	half _Offset;
 
-	struct VertexData {
+	struct a2v {
 		float4 vertex : POSITION;
 		float2 uv : TEXCOORD0;
 	};
@@ -30,7 +30,7 @@ Shader "MyWorld/PostProc Bloom"  {
 		float2 uv : TEXCOORD0;
 	};
 
-	v2f vert (VertexData v) {
+	v2f vert (a2v v) {
 		v2f i;
 		i.pos = UnityObjectToClipPos(v.vertex);
 		i.uv = v.uv;
